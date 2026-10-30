@@ -3,8 +3,11 @@ $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $python = Join-Path $root ".venv\Scripts\python.exe"
 $port = 8503
 $url = "http://127.0.0.1:$port"
-$outLog = Join-Path $root "launcher.out.log"
-$errLog = Join-Path $root "launcher.err.log"
+$venvRoot = Split-Path -Parent (Split-Path -Parent $python)
+$processDir = Join-Path $venvRoot "_logs"
+New-Item -ItemType Directory -Force -Path $processDir | Out-Null
+$outLog = Join-Path $processDir "launcher.out.log"
+$errLog = Join-Path $processDir "launcher.err.log"
 
 function Test-Port {
     param([int]$Port)
@@ -18,8 +21,8 @@ function Test-Port {
     }
 }
 
-if (-not (Test-Path $python)) {
-    Write-Error "虚拟环境不存在：$python"
+if (-not (Test-Path -LiteralPath $python)) {
+    Write-Error "Virtual environment not found. Create .venv and install requirements.txt first."
     exit 1
 }
 
@@ -52,3 +55,5 @@ if (Test-Path $chrome) {
 } else {
     Start-Process $url
 }
+
+Write-Host "Jiangxi Travel Planner is running at $url"

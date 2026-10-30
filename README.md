@@ -39,6 +39,9 @@ Copy-Item .env.example .env
 
 没有配置任何模型 Key 时，系统仍可使用本地规则和演示数据跑通；没有高德 Key 时会显示 Mock/本地数据标记。
 
+Windows 下也可以直接双击项目根目录的 `启动.bat`。不要使用
+`python app.py` 启动，`app.py` 必须由 Streamlit 运行时启动。
+
 ## 模型配置
 
 项目使用 OpenAI-compatible 配置：
