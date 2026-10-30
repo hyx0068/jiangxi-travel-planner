@@ -32,6 +32,7 @@ def main() -> None:
                 "days": len(plan.days),
                 "total_cost": plan.total_cost,
                 "budget": plan.request.budget,
+                "budget_usage": round(plan.total_cost / plan.request.budget, 4),
                 "high_issues": [issue.message for issue in high],
                 "valid": not high,
                 "judge": judge.judge(plan).to_dict(),

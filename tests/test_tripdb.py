@@ -13,6 +13,7 @@ def test_trip_db_created_with_schema(poi_repo, guide_index, tmp_path) -> None:
             start_date="2026-11-01",
             days=3,
             budget=5000,
+            travelers=2,
             preferences="美食",
         )
     )
@@ -28,6 +29,9 @@ def test_trip_db_created_with_schema(poi_repo, guide_index, tmp_path) -> None:
     db = TripDatabase(path)
     try:
         versions = db.versions()
+        loaded = db.load_plan()
     finally:
         db.close()
     assert versions[0]["version"] == 1
+    assert loaded is not None
+    assert loaded.request.travelers == 2

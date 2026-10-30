@@ -99,6 +99,7 @@ class OpenAICompatibleLLM:
 - days: 整数
 - budget: 数字（人民币）
 - origin: 出发城市
+- travelers: 出行人数，未知时返回 1
 - preferences: 偏好描述
 - pace: relaxed | balanced | packed
 - must_visit: 字符串数组

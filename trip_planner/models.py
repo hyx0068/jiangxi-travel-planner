@@ -11,6 +11,7 @@ class TripRequest:
     days: int
     budget: float
     origin: str = "上海"
+    travelers: int = 1
     preferences: str = ""
     pace: str = "balanced"
     must_visit: list[str] = field(default_factory=list)

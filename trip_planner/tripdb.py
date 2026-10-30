@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS trip_info (
     days INTEGER NOT NULL,
     budget REAL NOT NULL,
     origin TEXT,
+    travelers INTEGER NOT NULL DEFAULT 1,
     preferences TEXT,
     pace TEXT,
     total_cost REAL NOT NULL,
@@ -108,6 +109,13 @@ class TripDatabase:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.conn = sqlite3.connect(self.path)
         self.conn.executescript(SCHEMA)
+        columns = {
+            row[1] for row in self.conn.execute("PRAGMA table_info(trip_info)").fetchall()
+        }
+        if "travelers" not in columns:
+            self.conn.execute(
+                "ALTER TABLE trip_info ADD COLUMN travelers INTEGER NOT NULL DEFAULT 1"
+            )
         self.conn.commit()
 
     def close(self) -> None:
@@ -117,9 +125,9 @@ class TripDatabase:
         self.conn.execute(
             """
             INSERT OR REPLACE INTO trip_info
-            (trip_id, city, start_date, days, budget, origin, preferences, pace, total_cost, summary,
-             hotel_name, hotel_price, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (trip_id, city, start_date, days, budget, origin, travelers, preferences, pace,
+             total_cost, summary, hotel_name, hotel_price, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 plan.trip_id,
@@ -128,6 +136,7 @@ class TripDatabase:
                 plan.request.days,
                 plan.request.budget,
                 plan.request.origin,
+                plan.request.travelers,
                 plan.request.preferences,
                 plan.request.pace,
                 plan.total_cost,
@@ -230,6 +239,7 @@ class TripDatabase:
             days=int(info["days"]),
             budget=float(info["budget"]),
             origin=info.get("origin") or "",
+            travelers=int(info.get("travelers") or 1),
             preferences=info.get("preferences") or "",
             pace=info.get("pace") or "balanced",
             raw_text="",

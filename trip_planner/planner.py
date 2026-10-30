@@ -61,9 +61,14 @@ class TripPlanner:
         days: list[DayPlan] = []
         start = date.fromisoformat(request.start_date)
         nights = max(1, request.days - 1)
+        rooms = max(1, math.ceil(max(1, request.travelers) / 2))
         if hotel_options is None:
+            nightly_budget = max(
+                120.0,
+                min(800.0, request.budget * 0.38 / nights / rooms),
+            )
             hotel_options = self.hotel_provider.search(
-                city, request.budget / nights, request.preferences, limit=3
+                city, nightly_budget, request.preferences, limit=3
             )
         if selected_hotel is None:
             selected_hotel = (
@@ -393,34 +398,70 @@ class TripPlanner:
         return " · ".join(tags) if tags else "自由活动"
 
     def recalculate_budget(self, plan: TripPlan, city: City) -> None:
+        travelers = max(1, plan.request.travelers)
+        rooms = max(1, math.ceil(travelers / 2))
         tickets = sum(
             item.ticket for day in plan.days for item in day.items
-        )
+        ) * travelers
         nights = max(0, plan.request.days - 1)
         nightly_rate = (
             plan.selected_hotel.price
             if plan.selected_hotel and plan.selected_hotel.price > 0
             else city.hotel_rate
         )
-        hotel = nights * nightly_rate
-        meals = plan.request.days * 150
-        transport = plan.request.days * 80 + city.airport_transfer
-        subtotal = hotel + meals + transport + tickets
-        buffer = round(subtotal * 0.10, 2)
+        hotel = nights * nightly_rate * rooms
+        base_meals = plan.request.days * 120 * travelers
+        transport = plan.request.days * (80 if travelers <= 3 else 120) + (
+            city.airport_transfer * rooms
+        )
+        fixed = hotel + base_meals + transport + tickets
+        minimum_buffer = max(80.0, fixed * 0.08)
+        target = min(plan.request.budget * 0.94, plan.request.budget)
+        spendable = max(0.0, target - fixed - minimum_buffer)
+        meal_upgrade = min(
+            plan.request.days * travelers * 80,
+            spendable * 0.60,
+        )
+        remaining = max(0.0, spendable - meal_upgrade)
+        experience_reserve = min(
+            plan.request.days * travelers * 300,
+            remaining,
+        )
+        meals = base_meals + meal_upgrade
+        buffer = minimum_buffer + max(0.0, remaining - experience_reserve)
         hotel_label = f"住宿 {nights} 晚"
         if plan.selected_hotel and plan.selected_hotel.price <= 0:
             hotel_label += "（城市均价估算）"
         plan.budget_items = [
             BudgetItem("hotel", hotel_label, round(hotel, 2)),
-            BudgetItem("meal", f"餐饮 {plan.request.days} 天", round(meals, 2)),
+            BudgetItem(
+                "meal",
+                f"餐饮与特色餐 {plan.request.days} 天 / {travelers} 人",
+                round(meals, 2),
+            ),
             BudgetItem("transport", "市内交通 + 机场往返", round(transport, 2)),
             BudgetItem("ticket", "门票", round(tickets, 2)),
-            BudgetItem("buffer", "机动 10%", buffer),
         ]
+        if experience_reserve > 0:
+            plan.budget_items.append(
+                BudgetItem(
+                    "experience",
+                    "可选体验 / 购物升级预留",
+                    round(experience_reserve, 2),
+                )
+            )
+        if buffer > 0:
+            plan.budget_items.append(
+                BudgetItem("buffer", "机动与应急预留", round(buffer, 2))
+            )
         plan.total_cost = round(sum(item.amount for item in plan.budget_items), 2)
         for day in plan.days:
             day.daily_cost = round(
-                sum(item.ticket for item in day.items) + 150 + 80, 2
+                sum(item.ticket for item in day.items) * travelers
+                + meals / max(1, plan.request.days)
+                + (transport - city.airport_transfer * rooms)
+                / max(1, plan.request.days),
+                2,
             )
 
     def _summary(self, plan: TripPlan, city: City) -> str:
@@ -436,7 +477,9 @@ class TripPlanner:
             hotel = ""
         return (
             f"{city.name} {plan.request.days} 天，预算 {plan.request.budget:.0f} 元，"
-            f"当前预估 {plan.total_cost:.0f} 元。{hotel}核心安排：{names or '待补充'}。"
+            f"当前预估 {plan.total_cost:.0f} 元"
+            f"（预算利用约 {plan.total_cost / plan.request.budget:.0%}）。"
+            f"{hotel}核心安排：{names or '待补充'}。"
         )
 
     def _attach_issues(self, plan: TripPlan, city: City) -> None:

@@ -49,3 +49,23 @@ def test_closed_museum_is_not_scheduled_on_monday(poi_repo: POIRepository, guide
     for day in plan.days:
         if day.date == "2026-11-02":
             assert all(item.poi_id != "nc_aug1_museum" for item in day.items)
+
+
+def test_budget_utilization_is_close_to_requested_budget(
+    poi_repo: POIRepository, guide_index: GuideIndex
+) -> None:
+    planner = TripPlanner(poi_repo=poi_repo, guide_index=guide_index)
+    plan = planner.build(
+        TripRequest(
+            city="nanchang",
+            start_date="2026-11-06",
+            days=3,
+            budget=3000,
+            travelers=2,
+            preferences="美食、人文",
+            pace="balanced",
+        )
+    )
+    assert plan.total_cost <= 3000
+    assert 0.90 <= plan.total_cost / 3000 <= 0.98
+    assert any(item.category == "experience" for item in plan.budget_items)

@@ -251,6 +251,8 @@ class TripAgent:
             start = (date.today() + timedelta(days=7)).isoformat()
         days = int(data.get("days") or 3)
         budget = float(data.get("budget") or 5000)
+        travelers = int(data.get("travelers") or 1)
+        travelers = max(1, min(travelers, 6))
         pace = data.get("pace") if data.get("pace") in PACE_LABELS else "balanced"
         named_poi = self.poi_repo.add_place(city, place) if place else None
         must = data.get("must_visit") or []
@@ -264,6 +266,7 @@ class TripAgent:
             days=max(1, min(days, 6)),
             budget=budget,
             origin=str(data.get("origin") or "上海"),
+            travelers=travelers,
             preferences=str(data.get("preferences") or raw_text),
             pace=pace,
             must_visit=[str(item) for item in must],
@@ -306,6 +309,8 @@ class TripAgent:
 
         budget_match = re.search(r"预算\s*(\d+)", text) or re.search(r"(\d+)\s*元", text)
         budget = float(budget_match.group(1)) if budget_match else 5000
+        travelers_match = re.search(r"(\d+)\s*人", text)
+        travelers = max(1, min(int(travelers_match.group(1)) if travelers_match else 1, 6))
 
         origin_match = re.search(r"从(.{1,8}?)出发", text)
         origin = origin_match.group(1) if origin_match else "上海"
@@ -326,6 +331,7 @@ class TripAgent:
             "days": days,
             "budget": budget,
             "origin": origin,
+            "travelers": travelers,
             "preferences": text,
             "pace": pace,
             "must_visit": must,

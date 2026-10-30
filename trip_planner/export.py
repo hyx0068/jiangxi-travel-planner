@@ -14,6 +14,7 @@ def to_markdown(plan: TripPlan) -> str:
         f"- 出发：{request.origin}",
         f"- 日期：{request.start_date} 起 {request.days} 天",
         f"- 预算：{request.budget:.0f} 元",
+        f"- 人数：{request.travelers} 人",
         f"- 预估：{plan.total_cost:.0f} 元",
         f"- 节奏：{request.pace}",
         "",

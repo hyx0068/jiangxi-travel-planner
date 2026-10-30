@@ -68,7 +68,14 @@ class ItineraryJudge:
         feasibility = max(1.0, 5.0 - high * 1.5 - medium * 0.5)
         pacing = max(1.0, 5.0 - max(0, len(plan.days) - 1) * 0.1)
         budget_ratio = plan.total_cost / plan.request.budget if plan.request.budget else 1
-        budget = 5.0 if budget_ratio <= 0.9 else 3.5 if budget_ratio <= 1 else 2.0
+        if budget_ratio > 1:
+            budget = 2.0
+        elif budget_ratio >= 0.88:
+            budget = 5.0
+        elif budget_ratio >= 0.78:
+            budget = 4.0
+        else:
+            budget = 3.0
         preference = 4.0 if plan.request.preferences else 3.0
         explanation = 4.0 if plan.summary else 2.0
         return JudgeResult(

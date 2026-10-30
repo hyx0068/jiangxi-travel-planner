@@ -24,6 +24,7 @@ def main(argv: list[str] | None = None) -> int:
     plan_parser.add_argument("--days", type=int, default=3)
     plan_parser.add_argument("--budget", type=float, default=5000)
     plan_parser.add_argument("--origin", default="上海")
+    plan_parser.add_argument("--travelers", type=int, default=1)
     plan_parser.add_argument("--preferences", default="")
     plan_parser.add_argument("--pace", choices=["relaxed", "balanced", "packed"], default="balanced")
     plan_parser.add_argument("--json", action="store_true")
@@ -51,6 +52,7 @@ def main(argv: list[str] | None = None) -> int:
                     days=args.days,
                     budget=args.budget,
                     origin=args.origin,
+                    travelers=max(1, min(args.travelers, 6)),
                     preferences=args.preferences,
                     pace=args.pace,
                 )

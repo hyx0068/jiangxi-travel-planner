@@ -184,7 +184,8 @@ with st.sidebar:
             )
         start = st.date_input("出发日期", value=date.today() + timedelta(days=7))
         days = st.slider("天数", 1, 5, 3)
-        budget = st.number_input("预算（元）", 500, 20000, 3000, step=500)
+        travelers = st.number_input("出行人数", 1, 6, 1, step=1)
+        budget = st.number_input("总预算（元，含吃住行）", 500, 20000, 3000, step=500)
         origin = st.text_input("出发城市", "上海")
         preferences = st.text_input("偏好", "美食、景点、不赶")
         pace = st.selectbox(
@@ -202,6 +203,7 @@ with st.sidebar:
                             city=city_value,
                             start_date=start.isoformat(),
                             days=days,
+                            travelers=int(travelers),
                             budget=float(budget),
                             origin=origin,
                             preferences=preferences,
@@ -282,14 +284,20 @@ if plan is None:
 
 request = plan.request
 high_issues = [issue for issue in plan.issues if issue.severity == "high"]
-c1, c2, c3, c4 = st.columns(4)
+c1, c2, c3, c4, c5 = st.columns(5)
 c1.metric("天数", f"{request.days} 天")
-c2.metric("预估 / 预算", f"{plan.total_cost:.0f} / {request.budget:.0f} 元")
-c3.metric(
+c2.metric("人数", f"{request.travelers} 人")
+c3.metric("预估 / 预算", f"{plan.total_cost:.0f} / {request.budget:.0f} 元")
+c4.metric("预算利用", f"{plan.total_cost / request.budget:.0%}" if request.budget else "-")
+c5.metric(
     "景点",
     f"{sum(1 for day in plan.days for item in day.items if item.kind == 'poi')} 个",
 )
-c4.metric("高优先级问题", len(high_issues))
+st.caption(f"高优先级校验问题：{len(high_issues)} 个")
+st.caption(
+    "预算策略：在不超过总预算的前提下，优先提升住宿、餐饮和体验质量，"
+    "目标使用约 90%～98%；体验/购物预留属于可选消费，不要求实际花完。"
+)
 
 st.markdown(f"**{plan.summary}**")
 if plan.db_path:
@@ -477,6 +485,9 @@ with tab_budget:
     st.dataframe(budget_df, hide_index=True, width="stretch")
     st.bar_chart(budget_df.set_index("项目"), width="stretch")
     st.caption(f"预估合计 {plan.total_cost:.0f} 元，预算 {request.budget:.0f} 元。")
+    st.caption(
+        "“可选体验 / 购物升级预留”用于把预算与品质方案对齐，可按实际情况减少或放弃。"
+    )
 
 st.divider()
 col1, col2 = st.columns(2)
