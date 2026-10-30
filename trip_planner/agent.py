@@ -10,7 +10,11 @@ from .llm import LLMError, OpenAICompatibleLLM
 from .models import POI, TripPlan, TripRequest
 from .planner import TripPlanner
 from .poi import POIRepository
-from .scope import find_supported_city_in_text, supported_city_names
+from .scope import (
+    find_supported_city_in_text,
+    normalize_city_name,
+    supported_city_names,
+)
 from .tripdb import TripRepository
 
 
@@ -237,14 +241,18 @@ class TripAgent:
         place = str(data.get("place") or "").strip()
         if not place:
             place = find_supported_city_in_text(raw_text)
-        city = self.poi_repo.resolve_city_from_place(place) if place else None
-        if city is None:
-            city_value = str(data.get("city") or "").strip()
-            if not city_value:
-                raise ValueError(
-                    "请明确江西省内的目的地，例如南昌、九江、景德镇或上饶。"
-                )
-            city = self.poi_repo.get_city(city_value)
+        # An explicit Jiangxi city in the original text is more trustworthy
+        # than the model's city field, which may confuse origin and destination.
+        city_hint = (
+            find_supported_city_in_text(raw_text)
+            or normalize_city_name(place)
+            or str(data.get("city") or "").strip()
+        )
+        if not city_hint:
+            raise ValueError(
+                "请明确江西省内的目的地，例如南昌、九江、景德镇或上饶。"
+            )
+        city = self.poi_repo.get_city(city_hint)
         start = str(data.get("start_date") or (date.today() + timedelta(days=7)).isoformat())
         try:
             date.fromisoformat(start)

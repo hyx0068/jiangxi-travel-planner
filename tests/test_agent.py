@@ -33,3 +33,25 @@ def test_explicit_request(poi_repo, guide_index, tmp_path) -> None:
     )
     assert plan.request.city == "jiujiang"
     assert plan.total_cost > 0
+
+
+def test_user_text_city_takes_priority_over_llm_city(
+    poi_repo, guide_index, tmp_path
+) -> None:
+    planner = TripPlanner(poi_repo=poi_repo, guide_index=guide_index)
+    agent = TripAgent(planner, TripRepository(tmp_path / "trips"))
+    request = agent._to_request(
+        {
+            "city": "上海",
+            "place": "",
+            "start_date": "2026-11-06",
+            "days": 3,
+            "budget": 3000,
+            "origin": "上海",
+            "preferences": "美食",
+            "pace": "balanced",
+        },
+        "从上海出发去南昌玩3天，预算3000元，喜欢美食",
+    )
+    assert request.city == "nanchang"
+    assert request.origin == "上海"
