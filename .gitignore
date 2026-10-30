@@ -8,6 +8,7 @@ venv/
 .env
 .streamlit/secrets.toml
 data/*.db
+data/chroma/
 data/trips/
 data/eval_trips/
 data/dynamic_cities.json

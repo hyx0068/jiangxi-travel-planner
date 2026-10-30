@@ -90,6 +90,7 @@ class TripAgent:
                 plan.summary = self.llm.narrate(
                     plan.summary,
                     json.dumps([day.to_dict() for day in plan.days], ensure_ascii=False),
+                    json.dumps(plan.citations, ensure_ascii=False),
                 ) or plan.summary
                 trace.append(
                     {"step": "narrate", "tool": "llm", "detail": "LLM 生成行程说明", "ok": True}

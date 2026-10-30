@@ -123,6 +123,11 @@ st.session_state.setdefault(
 with st.sidebar:
     render_nav()
     st.caption("目的地范围：仅限江西省内")
+    vector = getattr(guide_index, "vector", None)
+    if vector is not None and vector.enabled:
+        st.caption(f"攻略检索：BM25 + Chroma（{vector.label}）")
+    else:
+        st.caption("攻略检索：BM25（向量检索不可用，已自动降级）")
     llm_cfg = get_llm_config(st)
     api_key = llm_cfg.get("api_key", "")
     base_url = llm_cfg.get("base_url", "")
@@ -301,6 +306,20 @@ st.caption(
     "预算策略：在不超过总预算的前提下，优先提升住宿、餐饮和体验质量，"
     "目标使用约 90%～98%；体验/购物预留属于可选消费，不要求实际花完。"
 )
+if plan.citations:
+    with st.expander(f"查看攻略检索依据（{len(plan.citations)} 条）"):
+        for citation in plan.citations:
+            ranks = []
+            if citation.get("bm25_rank"):
+                ranks.append(f"BM25 第 {citation['bm25_rank']} 名")
+            if citation.get("vector_rank"):
+                ranks.append(f"向量第 {citation['vector_rank']} 名")
+            st.markdown(
+                f"**《{citation['doc_name']}》 · {citation['heading']}**"
+            )
+            st.caption(citation["snippet"])
+            if ranks:
+                st.caption(" · ".join(ranks))
 
 st.markdown(f"**{plan.summary}**")
 if plan.db_path:

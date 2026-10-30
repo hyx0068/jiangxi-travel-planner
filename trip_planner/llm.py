@@ -119,12 +119,13 @@ class OpenAICompatibleLLM:
         except json.JSONDecodeError:
             return None
 
-    def narrate(self, plan_summary: str, days_json: str) -> str:
+    def narrate(self, plan_summary: str, days_json: str, citations_json: str = "[]") -> str:
         prompt = f"""
 你是江西短途旅行规划助手。用中文写一段 120 字以内的行程说明，先给整体节奏，再点出 2-3 个亮点。
 不要编造未提供的价格或营业时间，不要使用“绝对”“保证”等词。
 行程摘要：{plan_summary}
 每日安排：{days_json}
+攻略依据：{citations_json}
 """.strip()
         return self.complete(
             "你只根据给定行程写说明，不增加未提供的景点和价格。",

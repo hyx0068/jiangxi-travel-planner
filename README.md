@@ -19,7 +19,8 @@
 - Streamlit 表单和自然语言输入。
 - DeepSeek、Qwen、GLM 及 OpenAI-compatible 多模型切换。
 - 高德 POI、酒店、餐厅、天气和驾车路线适配。
-- 本地攻略检索与来源引用。
+- SQLite FTS5/BM25 与 ChromaDB 向量检索的混合攻略检索。
+- 用户界面可查看攻略依据、BM25 排名和向量排名。
 - 预算拆分、活动数量、通勤、重复地点、闭馆日等规则校验。
 - 预算利用策略：在不超支的前提下，优先升级住宿、餐饮和体验，目标使用总预算的 90%～98%。
 - 支持出行人数输入，餐饮、门票和房型数量会随人数调整。
@@ -100,6 +101,25 @@ PUBLIC_DEMO_MODE = "true"
 .\.venv\Scripts\python.exe -m pytest
 ```
 
-## 当前阶段边界
+## 检索配置
 
-当前版本复用上游的 SQLite FTS5 + BM25 本地攻略检索。后续阶段可增加小型 ChromaDB 并形成 BM25 + 向量混合检索，不影响现有行程生成和范围校验。
+默认配置是：
+
+```env
+EMBEDDING_PROVIDER=hash
+```
+
+它会在首次启动时根据 `guides/` 下的 Markdown 文档构建本地 ChromaDB，不依赖额外模型或密钥，适合 Streamlit Community Cloud 免费部署。
+
+如果希望使用语义向量，可以配置 OpenAI-compatible Embedding 接口：
+
+```env
+EMBEDDING_PROVIDER=openai_compatible
+EMBEDDING_API_KEY=your-embedding-key
+EMBEDDING_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
+EMBEDDING_MODEL=text-embedding-v4
+```
+
+应用会按文档内容生成独立的 Chroma collection，避免修改攻略后继续使用旧索引。Chroma 初始化或查询失败时自动退回 BM25，不影响主流程。
+
+`data/chroma/` 属于本地生成索引，不提交到 Git；Streamlit Cloud 首次启动时会根据 `guides/` 自动构建。

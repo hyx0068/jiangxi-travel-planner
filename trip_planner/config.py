@@ -36,6 +36,10 @@ def _load_streamlit_secrets() -> None:
             "AMAP_API_KEY",
             "BAIDU_AK",
             "JUDGE_MODEL",
+            "EMBEDDING_PROVIDER",
+            "EMBEDDING_API_KEY",
+            "EMBEDDING_BASE_URL",
+            "EMBEDDING_MODEL",
             "PUBLIC_DEMO_MODE",
         ):
             if os.getenv(key):
@@ -57,6 +61,7 @@ DATA_DIR = ROOT / "data"
 TRIPS_DIR = DATA_DIR / "trips"
 GUIDES_DIR = ROOT / "guides"
 GUIDES_DB = DATA_DIR / "guides.db"
+CHROMA_DIR = DATA_DIR / "chroma"
 CITIES_PATH = DATA_DIR / "jiangxi_cities.json"
 REPORTS_DIR = ROOT / "reports"
 
@@ -117,6 +122,13 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
 OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1").rstrip("/")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 JUDGE_MODEL = os.getenv("JUDGE_MODEL", OPENAI_MODEL)
+EMBEDDING_PROVIDER = os.getenv("EMBEDDING_PROVIDER", "hash").strip().lower()
+EMBEDDING_API_KEY = os.getenv("EMBEDDING_API_KEY", "").strip()
+EMBEDDING_BASE_URL = os.getenv(
+    "EMBEDDING_BASE_URL",
+    "https://dashscope.aliyuncs.com/compatible-mode/v1",
+).rstrip("/")
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-v4").strip()
 PUBLIC_DEMO_MODE = os.getenv("PUBLIC_DEMO_MODE", "").strip().lower() in {
     "1",
     "true",

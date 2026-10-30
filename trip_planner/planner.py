@@ -56,7 +56,10 @@ class TripPlanner:
             self.photo_provider.enrich_city(city, city.pois)
         preferred = preferred_tags(request.preferences, city)
         must_visit = self._must_visit(city, request.must_visit)
-        candidates = self._ordered_candidates(city, preferred, must_visit)
+        guide_hits = self.guide_index.search(
+            city.id, f"{request.preferences} {city.name}", limit=8
+        )
+        candidates = self._ordered_candidates(city, preferred, must_visit, guide_hits)
         max_activities = PACE_MAX_ACTIVITIES.get(request.pace, 3)
         used: set[str] = set()
         days: list[DayPlan] = []
@@ -151,17 +154,33 @@ class TripPlanner:
             created_at=datetime.now().isoformat(timespec="seconds"),
         )
         self.recalculate_budget(plan, city)
-        plan.citations = [
-            hit.to_dict()
-            for hit in self.guide_index.search(
-                city.id, f"{request.preferences} {city.name}", limit=8
-            )
-        ]
+        plan.citations = [hit.to_dict() for hit in guide_hits]
+        vector = getattr(self.guide_index, "vector", None)
+        retrieval_mode = (
+            f"BM25 + Chroma({vector.label})"
+            if vector is not None and vector.enabled
+            else "BM25"
+        )
+        plan.trace.append(
+            {
+                "step": "retrieve",
+                "tool": "HybridRAG",
+                "detail": f"{retrieval_mode}：命中 {len(guide_hits)} 条攻略",
+                "ok": bool(guide_hits),
+            }
+        )
         for day in plan.days:
-            if day.items and plan.citations:
-                day.items[0].guide_citation = (
-                    f"{plan.citations[0]['doc_name']} · {plan.citations[0]['heading']}"
-                )
+            poi_names = [item.poi_name for item in day.items if item.kind == "poi"]
+            best_hit = next(
+                (
+                    hit
+                    for hit in guide_hits
+                    if any(name in f"{hit.heading}{hit.content}" for name in poi_names)
+                ),
+                guide_hits[0] if guide_hits else None,
+            )
+            if day.items and best_hit is not None:
+                day.items[0].guide_citation = f"{best_hit.doc_name} · {best_hit.heading}"
         meals = (
             self.meal_provider.search(city, 10)
             if self.meal_provider is not None
@@ -262,12 +281,21 @@ class TripPlanner:
         return result
 
     def _ordered_candidates(
-        self, city: City, preferred: list[str], must_visit: list[POI]
+        self,
+        city: City,
+        preferred: list[str],
+        must_visit: list[POI],
+        guide_hits=None,
     ) -> list[POI]:
         must_ids = {poi.id for poi in must_visit}
+        evidence = " ".join(
+            f"{hit.heading} {hit.content}" for hit in (guide_hits or [])
+        )
+
         def key(poi: POI):
             tag_hits = sum(1 for tag in preferred if tag in poi.tags or tag in city.tags)
-            return (poi.id in must_ids, tag_hits, poi.score)
+            guide_hits_count = 1 if poi.name in evidence else 0
+            return (poi.id in must_ids, tag_hits, guide_hits_count, poi.score)
         return sorted(city.pois, key=key, reverse=True)
 
     def _pick_next(

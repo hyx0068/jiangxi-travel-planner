@@ -1,0 +1,14 @@
+[
+  {"city": "nanchang", "query": "南昌拌粉瓦罐汤早餐", "expected": "美食"},
+  {"city": "nanchang", "query": "滕王阁和赣江夜景", "expected": "人文与城市地标"},
+  {"city": "nanchang", "query": "梅岭爬山和户外天气", "expected": "爬山与户外"},
+  {"city": "jiujiang", "query": "庐山一整天怎么安排", "expected": "庐山"},
+  {"city": "jiujiang", "query": "甘棠湖浔阳楼江景路线", "expected": "市区人文与江景"},
+  {"city": "jiujiang", "query": "庐山索道交通和雨天备选", "expected": "庐山"},
+  {"city": "jingdezhen", "query": "御窑博物馆周一闭馆", "expected": "陶瓷文化"},
+  {"city": "jingdezhen", "query": "三宝陶阳里拍照夜游", "expected": "拍照与文创"},
+  {"city": "jingdezhen", "query": "瑶里距离市区多远", "expected": "拍照与文创"},
+  {"city": "shangrao", "query": "婺源篁岭旺季排队", "expected": "古村与夜游"},
+  {"city": "shangrao", "query": "三清山索道天气和末班时间", "expected": "爬山"},
+  {"city": "shangrao", "query": "第二天去婺源住哪里", "expected": "住宿与路线"}
+]

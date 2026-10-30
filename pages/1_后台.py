@@ -174,6 +174,7 @@ else:
                         "parse": "解析",
                         "build": "生成",
                         "narrate": "说明",
+                        "retrieve": "攻略检索",
                         "save": "保存",
                         "hotel": "酒店",
                     }
@@ -185,6 +186,7 @@ else:
                         "SQLite": "数据库",
                         "llm": "大模型",
                         "HotelProvider": "酒店搜索",
+                        "HybridRAG": "混合检索",
                         "form": "表单",
                         "rule": "规则",
                     }
@@ -197,10 +199,17 @@ else:
     with tab_guide:
         if plan.citations:
             for citation in plan.citations:
+                ranks = []
+                if citation.get("bm25_rank"):
+                    ranks.append(f"BM25 第 {citation['bm25_rank']} 名")
+                if citation.get("vector_rank"):
+                    ranks.append(f"向量第 {citation['vector_rank']} 名")
                 st.markdown(
                     f"**《{citation['doc_name']}》 · {citation['heading']}**\n\n"
                     f"{citation['snippet']}"
                 )
+                if ranks:
+                    st.caption(" · ".join(ranks))
         else:
             st.caption("没有攻略引用。")
 

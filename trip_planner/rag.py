@@ -22,6 +22,11 @@ class GuideHit:
     heading: str
     content: str
     score: float = 0.0
+    chunk_id: int = 0
+    bm25_rank: int | None = None
+    vector_rank: int | None = None
+    bm25_score: float = 0.0
+    vector_score: float = 0.0
 
     def snippet(self, limit: int = 180) -> str:
         text = re.sub(r"\s+", " ", self.content).strip()
@@ -34,6 +39,10 @@ class GuideHit:
             "heading": self.heading,
             "snippet": self.snippet(),
             "score": round(self.score, 4),
+            "bm25_rank": self.bm25_rank,
+            "vector_rank": self.vector_rank,
+            "bm25_score": round(self.bm25_score, 4),
+            "vector_score": round(self.vector_score, 4),
         }
 
 
@@ -86,7 +95,10 @@ class GuideIndex:
         self.db_path = Path(db_path)
         self.guides_dir = Path(guides_dir)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
+        self.vector = None
+        self.vector_error = ""
         self.ensure()
+        self._ensure_vector_store()
 
     def ensure(self) -> None:
         if not self.db_path.exists():
@@ -134,6 +146,20 @@ class GuideIndex:
             conn.commit()
         finally:
             conn.close()
+        self.vector = None
+        self._ensure_vector_store(force=True)
+
+    def _ensure_vector_store(self, force: bool = False) -> None:
+        if not force and self.vector is not None:
+            return
+        try:
+            from .vector_rag import ChromaGuideRetriever
+
+            self.vector = ChromaGuideRetriever(self.guides_dir)
+            self.vector_error = self.vector.error
+        except Exception as exc:
+            self.vector = None
+            self.vector_error = f"{type(exc).__name__}: {exc}"
 
     def search(self, city: str, query: str, limit: int = 5) -> list[GuideHit]:
         tokens = tokenize(query)
@@ -151,22 +177,60 @@ class GuideIndex:
                     ORDER BY rank
                     LIMIT ?
                     """,
-                    (match, city, limit),
+                    (match, city, max(limit * 3, 10)),
                 ).fetchall()
             else:
                 rows = conn.execute(
                     "SELECT *, 0 AS rank FROM chunks WHERE doc_id = ? LIMIT ?",
-                    (city, limit),
+                    (city, max(limit * 3, 10)),
                 ).fetchall()
-            return [
+            bm25_hits = [
                 GuideHit(
                     doc_id=row["doc_id"],
                     doc_name=row["doc_name"],
                     heading=row["heading"],
                     content=row["content"],
                     score=abs(float(row["rank"] or 0)),
+                    chunk_id=int(row["id"]),
+                    bm25_rank=index + 1,
+                    bm25_score=abs(float(row["rank"] or 0)),
                 )
-                for row in rows
+                for index, row in enumerate(rows)
             ]
         finally:
             conn.close()
+
+        if self.vector is None or not self.vector.enabled:
+            return bm25_hits[:limit]
+
+        combined: dict[tuple[str, str], GuideHit] = {
+            (hit.doc_id, hit.heading): hit for hit in bm25_hits
+        }
+        for vector_rank, vector_hit in enumerate(
+            self.vector.search(city, query, limit=max(limit * 3, 10)), start=1
+        ):
+            key = (vector_hit.doc_id, vector_hit.heading)
+            current = combined.get(key)
+            if current is None:
+                current = GuideHit(
+                    doc_id=vector_hit.doc_id,
+                    doc_name=vector_hit.doc_name,
+                    heading=vector_hit.heading,
+                    content=vector_hit.content,
+                    score=vector_hit.similarity,
+                    vector_rank=vector_rank,
+                    vector_score=vector_hit.similarity,
+                )
+                combined[key] = current
+            else:
+                current.vector_rank = vector_rank
+                current.vector_score = vector_hit.similarity
+
+        for hit in combined.values():
+            rrf = 0.0
+            if hit.bm25_rank:
+                rrf += 0.7 / (60 + hit.bm25_rank)
+            if hit.vector_rank:
+                rrf += 0.3 / (60 + hit.vector_rank)
+            hit.score = rrf
+        return sorted(combined.values(), key=lambda hit: hit.score, reverse=True)[:limit]
