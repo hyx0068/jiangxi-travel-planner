@@ -1,0 +1,66 @@
+[
+  {
+    "id": "nanchang",
+    "name": "南昌",
+    "center": [28.682, 115.858],
+    "hotel_rate": 320,
+    "airport_transfer": 40,
+    "tags": ["美食", "人文", "城市"],
+    "pois": [
+      {"id": "nc_tengwang", "name": "滕王阁", "category": "culture", "lat": 28.6835, "lon": 115.8634, "visit_minutes": 120, "ticket": 50, "open": "08:00", "close": "22:00", "closed_days": [], "tags": ["人文", "地标", "夜景"], "area": "东湖区", "score": 4.7, "description": "南昌代表性人文地标，适合安排半天并与赣江沿岸漫步串联。"},
+      {"id": "nc_wanshougong", "name": "万寿宫历史文化街区", "category": "food", "lat": 28.6755, "lon": 115.8915, "visit_minutes": 90, "ticket": 0, "open": "10:00", "close": "22:00", "closed_days": [], "tags": ["美食", "老街", "夜景"], "area": "西湖区", "score": 4.4, "description": "适合傍晚逛吃和拍照，本地演示数据中的餐饮价格需现场复核。"},
+      {"id": "nc_bayi_square", "name": "八一广场", "category": "landmark", "lat": 28.6778, "lon": 115.9001, "visit_minutes": 60, "ticket": 0, "open": "00:00", "close": "23:59", "closed_days": [], "tags": ["城市", "地标", "夜景"], "area": "东湖区", "score": 4.3, "description": "南昌市中心公共空间，适合作为城市漫游节点。"},
+      {"id": "nc_aug1_museum", "name": "南昌八一起义纪念馆", "category": "museum", "lat": 28.6733, "lon": 115.9022, "visit_minutes": 90, "ticket": 0, "open": "09:00", "close": "17:00", "closed_days": ["Monday"], "tags": ["历史", "博物馆", "免费"], "area": "西湖区", "score": 4.6, "description": "演示数据暂定周一闭馆，实际开放和预约要求需通过高德或官方渠道复核。"},
+      {"id": "nc_meiling", "name": "梅岭国家森林公园", "category": "nature", "lat": 28.783, "lon": 115.716, "visit_minutes": 180, "ticket": 30, "open": "08:00", "close": "17:30", "closed_days": [], "tags": ["爬山", "自然", "户外"], "area": "新建区", "score": 4.4, "description": "适合爬山和户外活动，距市区有一定车程，建议单独安排半天。"},
+      {"id": "nc_qiushui", "name": "秋水广场", "category": "nightlife", "lat": 28.681, "lon": 115.838, "visit_minutes": 75, "ticket": 0, "open": "10:00", "close": "22:30", "closed_days": [], "tags": ["夜景", "散步", "城市"], "area": "红谷滩区", "score": 4.2, "description": "赣江边散步和看夜景的地点，喷泉开放安排以现场公告为准。"}
+    ]
+  },
+  {
+    "id": "jiujiang",
+    "name": "九江",
+    "center": [29.705, 116.002],
+    "hotel_rate": 280,
+    "airport_transfer": 45,
+    "tags": ["爬山", "自然", "人文"],
+    "pois": [
+      {"id": "jj_lushan", "name": "庐山风景名胜区", "category": "nature", "lat": 29.558, "lon": 115.982, "visit_minutes": 300, "ticket": 160, "open": "06:00", "close": "18:00", "closed_days": [], "tags": ["爬山", "自然", "必去"], "area": "庐山市", "score": 4.8, "description": "庐山范围大且天气变化快，建议安排一整天并提前确认交通、索道和门票。"},
+      {"id": "jj_gantang", "name": "甘棠湖", "category": "nature", "lat": 29.706, "lon": 115.988, "visit_minutes": 75, "ticket": 0, "open": "00:00", "close": "23:59", "closed_days": [], "tags": ["散步", "城市", "自然"], "area": "浔阳区", "score": 4.2, "description": "市区内适合轻松散步的湖景节点。"},
+      {"id": "jj_xunyang", "name": "浔阳楼", "category": "culture", "lat": 29.721, "lon": 116.006, "visit_minutes": 60, "ticket": 20, "open": "08:00", "close": "18:00", "closed_days": [], "tags": ["人文", "江景", "地标"], "area": "浔阳区", "score": 4.3, "description": "长江边的人文地标，可与市区江岸步道串联。"},
+      {"id": "jj_suojiang", "name": "锁江楼", "category": "culture", "lat": 29.729, "lon": 116.021, "visit_minutes": 60, "ticket": 20, "open": "08:00", "close": "18:00", "closed_days": [], "tags": ["人文", "江景", "古建"], "area": "浔阳区", "score": 4.1, "description": "长江沿岸古建筑节点，适合与浔阳楼安排在同一半天。"},
+      {"id": "jj_donglin", "name": "东林寺", "category": "culture", "lat": 29.670, "lon": 115.991, "visit_minutes": 90, "ticket": 0, "open": "08:00", "close": "17:00", "closed_days": [], "tags": ["人文", "寺院", "安静"], "area": "濂溪区", "score": 4.4, "description": "适合安静参观，着装与开放区域要求以现场规定为准。"},
+      {"id": "jj_shizhong", "name": "石钟山", "category": "nature", "lat": 29.728, "lon": 116.317, "visit_minutes": 120, "ticket": 60, "open": "08:00", "close": "17:30", "closed_days": [], "tags": ["自然", "江景", "人文"], "area": "湖口县", "score": 4.3, "description": "位于湖口县，距离九江市区较远，适合与其他湖口景点同天安排。"}
+    ]
+  },
+  {
+    "id": "jingdezhen",
+    "name": "景德镇",
+    "center": [29.269, 117.184],
+    "hotel_rate": 300,
+    "airport_transfer": 35,
+    "tags": ["陶瓷", "人文", "美食"],
+    "pois": [
+      {"id": "jd_imperial_kiln", "name": "御窑博物馆", "category": "museum", "lat": 29.289, "lon": 117.205, "visit_minutes": 120, "ticket": 0, "open": "09:00", "close": "18:00", "closed_days": ["Monday"], "tags": ["陶瓷", "博物馆", "建筑"], "area": "珠山区", "score": 4.7, "description": "陶瓷主题重点场馆，演示数据暂定周一闭馆，预约安排需复核。"},
+      {"id": "jd_ceramic_museum", "name": "中国陶瓷博物馆", "category": "museum", "lat": 29.273, "lon": 117.180, "visit_minutes": 150, "ticket": 0, "open": "09:00", "close": "17:00", "closed_days": ["Monday"], "tags": ["陶瓷", "博物馆", "人文"], "area": "昌江区", "score": 4.6, "description": "系统了解景德镇陶瓷历史，适合半天参观。"},
+      {"id": "jd_taoyangli", "name": "陶阳里御窑景区", "category": "culture", "lat": 29.291, "lon": 117.204, "visit_minutes": 120, "ticket": 0, "open": "09:00", "close": "22:00", "closed_days": [], "tags": ["陶瓷", "老街", "夜景"], "area": "珠山区", "score": 4.5, "description": "适合步行游览和拍照，夜间氛围较好。"},
+      {"id": "jd_sanbao", "name": "三宝国际瓷谷", "category": "culture", "lat": 29.282, "lon": 117.268, "visit_minutes": 150, "ticket": 0, "open": "09:00", "close": "18:00", "closed_days": [], "tags": ["陶瓷", "文创", "山谷"], "area": "珠山区", "score": 4.4, "description": "陶瓷工作室和山谷村落集中，适合慢逛。"},
+      {"id": "jd_yaoli", "name": "瑶里古镇", "category": "culture", "lat": 29.460, "lon": 117.533, "visit_minutes": 180, "ticket": 80, "open": "08:00", "close": "17:30", "closed_days": [], "tags": ["古镇", "山水", "拍照"], "area": "浮梁县", "score": 4.5, "description": "距市区较远，适合安排半天以上并核对交通。"},
+      {"id": "jd_fuliang", "name": "浮梁古县衙", "category": "culture", "lat": 29.352, "lon": 117.218, "visit_minutes": 90, "ticket": 50, "open": "08:00", "close": "17:30", "closed_days": [], "tags": ["人文", "古建", "历史"], "area": "浮梁县", "score": 4.2, "description": "展示浮梁历史文化的古建景点，可与瑶里方向联动安排。"}
+    ]
+  },
+  {
+    "id": "shangrao",
+    "name": "上饶",
+    "center": [28.454, 117.943],
+    "hotel_rate": 280,
+    "airport_transfer": 50,
+    "tags": ["爬山", "自然", "古村"],
+    "pois": [
+      {"id": "sr_sanqingshan", "name": "三清山", "category": "nature", "lat": 28.914, "lon": 118.062, "visit_minutes": 360, "ticket": 120, "open": "07:00", "close": "17:30", "closed_days": [], "tags": ["爬山", "自然", "必去"], "area": "玉山县", "score": 4.8, "description": "高强度山岳景区，建议单独安排一整天并提前确认索道时间。"},
+      {"id": "sr_huangling", "name": "婺源篁岭", "category": "culture", "lat": 29.379, "lon": 117.919, "visit_minutes": 240, "ticket": 145, "open": "08:00", "close": "18:00", "closed_days": [], "tags": ["古村", "拍照", "自然"], "area": "婺源县", "score": 4.7, "description": "位于婺源县，适合安排半天以上；旺季交通和索道排队需留足时间。"},
+      {"id": "sr_wangxian", "name": "望仙谷", "category": "nature", "lat": 28.420, "lon": 117.958, "visit_minutes": 210, "ticket": 100, "open": "09:00", "close": "22:00", "closed_days": [], "tags": ["山谷", "夜景", "拍照"], "area": "广信区", "score": 4.5, "description": "山谷景观和夜景较有特色，节假日建议错峰。"},
+      {"id": "sr_gexian", "name": "葛仙村", "category": "culture", "lat": 28.345, "lon": 117.832, "visit_minutes": 180, "ticket": 100, "open": "09:00", "close": "21:30", "closed_days": [], "tags": ["夜游", "古村", "休闲"], "area": "铅山县", "score": 4.3, "description": "适合休闲和夜游，具体演出、门票与接驳需以当日公告为准。"},
+      {"id": "sr_wuyuan_museum", "name": "婺源县博物馆", "category": "museum", "lat": 29.247, "lon": 117.861, "visit_minutes": 90, "ticket": 0, "open": "09:00", "close": "17:00", "closed_days": ["Monday"], "tags": ["人文", "博物馆", "免费"], "area": "婺源县", "score": 4.1, "description": "了解婺源地方文化的室内备选点，演示数据暂定周一闭馆。"},
+      {"id": "sr_linghan", "name": "灵山风景区", "category": "nature", "lat": 28.389, "lon": 118.219, "visit_minutes": 240, "ticket": 95, "open": "08:00", "close": "17:00", "closed_days": [], "tags": ["爬山", "自然", "索道"], "area": "广信区", "score": 4.4, "description": "适合爬山和观景，具体开放线路视天气和索道运行情况而定。"}
+    ]
+  }
+]

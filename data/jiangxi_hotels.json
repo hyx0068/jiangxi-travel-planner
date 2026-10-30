@@ -1,0 +1,10 @@
+[
+  {"id": "nc_center_demo", "city": "nanchang", "name": "南昌市中心舒适型酒店（演示）", "price": 320, "rating": 4.4, "area": "市中心", "lat": 28.682, "lon": 115.858, "tags": ["地铁", "市中心", "性价比"], "address": "南昌市中心，具体门店需高德复核", "source": "local"},
+  {"id": "nc_tengwang_demo", "city": "nanchang", "name": "滕王阁附近住宿（演示）", "price": 360, "rating": 4.5, "area": "东湖区", "lat": 28.684, "lon": 115.866, "tags": ["人文", "江景", "舒适"], "address": "滕王阁周边，具体门店需高德复核", "source": "local"},
+  {"id": "jj_center_demo", "city": "jiujiang", "name": "九江市区舒适型酒店（演示）", "price": 280, "rating": 4.3, "area": "浔阳区", "lat": 29.705, "lon": 116.002, "tags": ["市中心", "交通方便", "性价比"], "address": "九江市区，具体门店需高德复核", "source": "local"},
+  {"id": "jj_lushan_demo", "city": "jiujiang", "name": "庐山山下住宿（演示）", "price": 330, "rating": 4.4, "area": "庐山", "lat": 29.558, "lon": 115.982, "tags": ["自然", "安静", "爬山"], "address": "庐山景区周边，具体门店需高德复核", "source": "local"},
+  {"id": "jd_taoyang_demo", "city": "jingdezhen", "name": "陶阳里附近住宿（演示）", "price": 300, "rating": 4.4, "area": "珠山区", "lat": 29.291, "lon": 117.204, "tags": ["陶瓷", "文创", "步行方便"], "address": "陶阳里周边，具体门店需高德复核", "source": "local"},
+  {"id": "jd_city_demo", "city": "jingdezhen", "name": "景德镇市区酒店（演示）", "price": 260, "rating": 4.2, "area": "市中心", "lat": 29.269, "lon": 117.184, "tags": ["性价比", "交通方便", "市中心"], "address": "景德镇市区，具体门店需高德复核", "source": "local"},
+  {"id": "sr_city_demo", "city": "shangrao", "name": "上饶市区酒店（演示）", "price": 260, "rating": 4.2, "area": "市区", "lat": 28.454, "lon": 117.943, "tags": ["交通方便", "性价比", "市中心"], "address": "上饶市区，具体门店需高德复核", "source": "local"},
+  {"id": "sr_wuyuan_demo", "city": "shangrao", "name": "婺源县城住宿（演示）", "price": 300, "rating": 4.3, "area": "婺源县", "lat": 29.247, "lon": 117.861, "tags": ["古村", "安静", "县城"], "address": "婺源县城，具体门店需高德复核", "source": "local"}
+]
