@@ -283,6 +283,9 @@ if plan is None:
     st.stop()
 
 request = plan.request
+# Streamlit hot reload can retain an object created before a model field was added.
+if not hasattr(request, "travelers"):
+    request.travelers = 1
 high_issues = [issue for issue in plan.issues if issue.severity == "high"]
 c1, c2, c3, c4, c5 = st.columns(5)
 c1.metric("天数", f"{request.days} 天")

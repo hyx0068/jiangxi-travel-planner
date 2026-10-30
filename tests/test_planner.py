@@ -69,3 +69,19 @@ def test_budget_utilization_is_close_to_requested_budget(
     assert plan.total_cost <= 3000
     assert 0.90 <= plan.total_cost / 3000 <= 0.98
     assert any(item.category == "experience" for item in plan.budget_items)
+
+
+def test_planner_accepts_legacy_request_without_travelers(
+    poi_repo: POIRepository, guide_index: GuideIndex
+) -> None:
+    request = TripRequest(
+        city="nanchang",
+        start_date="2026-11-06",
+        days=2,
+        budget=2000,
+        preferences="美食",
+    )
+    del request.travelers
+    planner = TripPlanner(poi_repo=poi_repo, guide_index=guide_index)
+    plan = planner.build(request)
+    assert plan.total_cost > 0

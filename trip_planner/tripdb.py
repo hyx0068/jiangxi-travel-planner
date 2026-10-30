@@ -136,7 +136,7 @@ class TripDatabase:
                 plan.request.days,
                 plan.request.budget,
                 plan.request.origin,
-                plan.request.travelers,
+                getattr(plan.request, "travelers", 1),
                 plan.request.preferences,
                 plan.request.pace,
                 plan.total_cost,

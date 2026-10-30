@@ -50,6 +50,7 @@ class TripPlanner:
     ) -> TripPlan:
         if request.days < 1:
             raise ValueError("旅行天数至少为 1 天。")
+        travelers = max(1, int(getattr(request, "travelers", 1)))
         city = self.poi_repo.get_city(request.city)
         if self.photo_provider is not None:
             self.photo_provider.enrich_city(city, city.pois)
@@ -61,7 +62,7 @@ class TripPlanner:
         days: list[DayPlan] = []
         start = date.fromisoformat(request.start_date)
         nights = max(1, request.days - 1)
-        rooms = max(1, math.ceil(max(1, request.travelers) / 2))
+        rooms = max(1, math.ceil(travelers / 2))
         if hotel_options is None:
             nightly_budget = max(
                 120.0,
@@ -398,7 +399,7 @@ class TripPlanner:
         return " · ".join(tags) if tags else "自由活动"
 
     def recalculate_budget(self, plan: TripPlan, city: City) -> None:
-        travelers = max(1, plan.request.travelers)
+        travelers = max(1, int(getattr(plan.request, "travelers", 1)))
         rooms = max(1, math.ceil(travelers / 2))
         tickets = sum(
             item.ticket for day in plan.days for item in day.items
