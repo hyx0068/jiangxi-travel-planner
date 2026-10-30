@@ -342,6 +342,16 @@ if llm_calls:
         f"本次大模型调用：{len(llm_calls)} 次"
         + ("，有失败并已回退模板。" if failed else "，解析/说明由模型完成。")
     )
+    failure = next(
+        (
+            step
+            for step in llm_calls
+            if step.get("step") == "narrate" and not step.get("ok", True)
+        ),
+        None,
+    )
+    if failure:
+        st.warning(f"大模型说明生成失败，已使用模板：{failure.get('detail', '未知错误')}")
 else:
     st.caption("本次未调用大模型：规则模式。")
 

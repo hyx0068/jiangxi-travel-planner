@@ -71,10 +71,21 @@ class OpenAICompatibleLLM:
                 return content
             except httpx.HTTPStatusError as exc:
                 last_error = f"HTTP {exc.response.status_code}"
+                try:
+                    payload = exc.response.json()
+                    provider_message = str(
+                        (payload.get("error") or {}).get("message")
+                        or payload.get("message")
+                        or ""
+                    ).strip()
+                    if provider_message:
+                        last_error += f" - {provider_message[:200]}"
+                except (ValueError, TypeError, AttributeError):
+                    pass
                 if exc.response.status_code in {429, 500, 502, 503, 504} and attempt < 2:
                     time.sleep(1.0 * (attempt + 1))
                     continue
-                raise LLMError(f"LLM 请求失败：{exc}") from exc
+                raise LLMError(f"LLM 请求失败：{last_error}") from exc
             except httpx.TimeoutException as exc:
                 last_error = "timeout"
                 if attempt < 2:
